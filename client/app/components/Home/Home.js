@@ -30,6 +30,8 @@ class Home extends Component {
     this.onTextBoxChangeSignUpLastName = this.onTextBoxChangeSignUpLastName.bind(this);
     this.onSignUp = this.onSignUp.bind(this)
     this.onSignIn = this.onSignIn.bind(this)
+    this.logout = this.logout.bind(this)
+
   }
 
 
@@ -194,7 +196,35 @@ class Home extends Component {
       });
   }
 
+  logout(){
+    this.setState({
+      isLoading: true
+    });
+    const obj = getFromStorage('the_main_app');
+    if(obj && obj.token){
+      const{token} = obj;
 
+      // verify token
+      fetch('/api/account/logout?token='+token)
+        .then(res => res.json())
+        .then(json => {
+          if(json.success){
+            this.setState({
+              token:'', 
+              isLoading: false
+            });
+          }else{
+            this.setState({
+              isLoading: false 
+            });
+          }
+
+      });
+    }else{
+      this.setState({isLoading: false,});
+    }
+
+  }
       /*
     fetch('/api/counters')
       .then(res => res.json())
@@ -303,6 +333,8 @@ class Home extends Component {
     return (
       <div>
         <p>Account </p>
+        <button onClick ={this.logout}> Log Out</button>
+
       </div>
 
     );
